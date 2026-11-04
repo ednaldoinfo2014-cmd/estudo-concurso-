@@ -14,9 +14,7 @@
   --text:#f1f5fb;
   --muted:#9ba9bd;
 }
-
 * {box-sizing:border-box}
-
 body {
   margin:0;
   padding:20px;
@@ -24,45 +22,28 @@ body {
   color:var(--text);
   font-family:Arial,sans-serif;
 }
-
-header {
-  text-align:center;
-  margin:12px 0 24px;
-}
-
-h1 {
-  color:var(--accent);
-  letter-spacing:2px;
-}
-
-.subtitle {color:var(--muted)}
-
+header {text-align:center;margin:12px 0 24px}
+h1 {color:var(--accent);letter-spacing:2px}
+.subtitle,.small {color:var(--muted)}
 .card {
   background:var(--card);
   padding:18px;
   border-radius:14px;
   margin-bottom:16px;
 }
-
-h2 {
-  font-size:18px;
-  margin-top:0;
-}
-
+h2 {font-size:18px;margin-top:0}
 .progress {
   background:#303c50;
   height:12px;
   border-radius:20px;
   overflow:hidden;
 }
-
 #bar {
   height:100%;
   width:0%;
   background:var(--green);
   transition:.3s;
 }
-
 .task {
   display:flex;
   align-items:center;
@@ -70,17 +51,8 @@ h2 {
   padding:12px 0;
   border-bottom:1px solid #303c50;
 }
-
-.task input {
-  width:19px;
-  height:19px;
-}
-
-.done {
-  text-decoration:line-through;
-  color:var(--muted);
-}
-
+.task input {width:19px;height:19px}
+.done {text-decoration:line-through;color:var(--muted)}
 button {
   border:0;
   background:var(--accent);
@@ -90,16 +62,13 @@ button {
   font-weight:bold;
   cursor:pointer;
 }
-
 button.secondary {background:#35445b}
-
 .timer {
   font-size:46px;
   text-align:center;
   font-weight:bold;
   margin:18px;
 }
-
 select,input,textarea {
   width:100%;
   padding:12px;
@@ -109,82 +78,30 @@ select,input,textarea {
   border:1px solid #35445b;
   border-radius:8px;
 }
-
-.small {
-  color:var(--muted);
-  font-size:13px;
+.small {font-size:13px}
+.status {margin-top:10px;min-height:18px}
+.record {
+  padding:10px 0;
+  border-bottom:1px solid #303c50;
+  overflow-wrap:anywhere;
 }
-
-button:disabled {
-  opacity:.5;
-  cursor:not-allowed;
+@media (max-width:600px) {
+  body {padding:12px}
+  .timer {font-size:40px}
 }
 </style>
 </head>
 
 <body>
-
 <header>
   <h1>ESTUDO PRO</h1>
   <div class="subtitle">CENTRAL DE MISSÕES • PMMG</div>
 </header>
 
-<!-- AUTENTICAÇÃO SUPABASE -->
-<div class="card" id="accountCard">
-  <h2>☁️ Conta e sincronização</h2>
-
-  <p id="authStatus" class="small">
-    Entre ou crie uma conta para sincronizar seus estudos.
-  </p>
-
-  <input
-    id="authEmail"
-    type="email"
-    autocomplete="email"
-    placeholder="Seu e-mail"
-  >
-
-  <input
-    id="authPassword"
-    type="password"
-    autocomplete="current-password"
-    placeholder="Senha (mínimo de 6 caracteres)"
-  >
-
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button id="loginBtn" onclick="signIn()">Entrar</button>
-
-    <button
-      class="secondary"
-      id="signupBtn"
-      onclick="signUp()"
-    >
-      Criar conta
-    </button>
-
-    <button
-      class="secondary"
-      id="logoutBtn"
-      onclick="signOut()"
-      hidden
-    >
-      Sair
-    </button>
-  </div>
-
-  <p class="small">
-    Seus registros antigos deste navegador continuam preservados localmente.
-  </p>
-</div>
-
 <!-- PROGRESSO -->
 <div class="card">
   <h2>📊 Progresso do dia</h2>
-
-  <div class="progress">
-    <div id="bar"></div>
-  </div>
-
+  <div class="progress"><div id="bar"></div></div>
   <p id="percentage">0% concluído</p>
   <p id="count">0 de 0 missões</p>
 </div>
@@ -192,107 +109,77 @@ button:disabled {
 <!-- MISSÕES -->
 <div class="card">
   <h2>🎯 Missões de hoje</h2>
-
   <div id="tasks"></div>
-
   <button onclick="addTask()">+ Nova missão</button>
 </div>
 
 <!-- POMODORO -->
 <div class="card">
   <h2>⏱️ Pomodoro</h2>
-
   <div class="timer" id="timer">25:00</div>
-
-  <div style="display:flex;gap:8px;justify-content:center">
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
     <button onclick="startTimer()">Iniciar</button>
-
-    <button class="secondary" onclick="pauseTimer()">
-      Pausar
-    </button>
-
-    <button class="secondary" onclick="resetTimer()">
-      Zerar
-    </button>
+    <button class="secondary" onclick="pauseTimer()">Pausar</button>
+    <button class="secondary" onclick="resetTimer()">Zerar</button>
   </div>
-
-  <p class="small" style="text-align:center">
-    25 minutos de foco
-  </p>
+  <p class="small" style="text-align:center">25 minutos de foco</p>
 </div>
 
 <!-- DISCIPLINAS -->
 <div class="card">
   <h2>📚 Disciplinas</h2>
-
   <select id="subject">
     <option>Português</option>
     <option>Matemática</option>
     <option>Inglês</option>
     <option>Direito</option>
   </select>
-
-  <input
-    id="topic"
-    placeholder="Digite o assunto estudado"
-  >
-
-  <button onclick="saveStudy()">
-    Registrar estudo
-  </button>
-
+  <input id="topic" placeholder="Digite o assunto estudado">
+  <button onclick="saveStudy()">Registrar estudo</button>
+  <p id="cloudStatus" class="small status">
+    Conectando ao banco de estudos compartilhado...
+  </p>
   <div id="history"></div>
 </div>
 
 <!-- CADERNO DE ERROS -->
 <div class="card">
   <h2>📝 Caderno de erros</h2>
-
-  <textarea
-    id="mistake"
-    rows="4"
-    placeholder="Anote a questão que errou e o motivo..."
-  ></textarea>
-
-  <button onclick="saveMistake()">
-    Salvar erro
-  </button>
-
+  <textarea id="mistake" rows="4"
+    placeholder="Anote a questão que errou e o motivo..."></textarea>
+  <button onclick="saveMistake()">Salvar erro</button>
   <div id="mistakes"></div>
 </div>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-
 // ======================================
 // CONFIGURAÇÃO SUPABASE
 // ======================================
+// A chave publishable/anon é pública e pode ficar no navegador.
+// Nunca coloque a chave service_role ou uma chave secreta neste arquivo.
 
-const SUPABASE_URL =
-"https://radarakilkphglcnxbwo.supabase.co";
-
+const SUPABASE_URL = "https://radarakilkphglcnxbwo.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_FwFLChCGCJpYC_wArW31Eg_lYnfvTrj";
+  "sb_publishable_FwFLChCGCJpYC_wArW31Eg_lYnfvTrj";
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
 
-let currentUser = null;
-
 const $ = id => document.getElementById(id);
-
 
 // ======================================
 // DADOS LOCAIS
 // ======================================
-
-let data = JSON.parse(
-  localStorage.getItem("estudoPro") || "{}"
-);
+let data = {};
+try {
+  data = JSON.parse(localStorage.getItem("estudoPro") || "{}");
+} catch (error) {
+  data = {};
+}
 
 data.tasks ||= [
   "Português — 10 questões",
@@ -301,495 +188,242 @@ data.tasks ||= [
   "Direito — 5 questões",
   "Revisar os erros do dia"
 ];
-
 data.checked ||= [];
 data.history ||= [];
 data.mistakes ||= [];
 
-function save() {
-  localStorage.setItem(
-    "estudoPro",
-    JSON.stringify(data)
-  );
+function saveLocal() {
+  localStorage.setItem("estudoPro", JSON.stringify(data));
 }
-
-
-// ======================================
-// AUTENTICAÇÃO
-// ======================================
-
-function setAuthStatus(message) {
-  $("authStatus").textContent = message;
-}
-
-function setSignedIn(user) {
-  currentUser = user || null;
-
-  $("authEmail").hidden = !!user;
-  $("authPassword").hidden = !!user;
-
-  $("loginBtn").hidden = !!user;
-  $("signupBtn").hidden = !!user;
-
-  $("logoutBtn").hidden = !user;
-}
-
-
-// CADASTRAR CONTA
-
-async function signUp() {
-
-  const email = $("authEmail").value.trim();
-  const password = $("authPassword").value;
-
-  if (!email || password.length < 6) {
-    setAuthStatus(
-      "Informe um e-mail válido e uma senha com pelo menos 6 caracteres."
-    );
-    return;
-  }
-
-  const { data: result, error } =
-    await supabaseClient.auth.signUp({
-      email,
-      password
-    });
-
-  if (error) {
-    setAuthStatus(
-      "Erro ao criar conta: " + error.message
-    );
-    return;
-  }
-
-  if (result.session) {
-    setSignedIn(result.user);
-    await loadCloudHistory();
-  } else {
-    setAuthStatus(
-      "Cadastro realizado. Confirme seu e-mail, se solicitado, e depois entre."
-    );
-  }
-}
-
-
-// ENTRAR
-
-async function signIn() {
-
-  const email = $("authEmail").value.trim();
-  const password = $("authPassword").value;
-
-  const { data: result, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-  if (error) {
-    setAuthStatus(
-      "Não foi possível entrar: " + error.message
-    );
-    return;
-  }
-
-  setSignedIn(result.user);
-
-  await loadCloudHistory();
-}
-
-
-// SAIR
-
-async function signOut() {
-
-  const { error } =
-    await supabaseClient.auth.signOut();
-
-  if (error) {
-    setAuthStatus(
-      "Erro ao sair: " + error.message
-    );
-    return;
-  }
-
-  setSignedIn(null);
-
-  setAuthStatus("Sessão encerrada.");
-
-  renderHistory();
-}
-
-
-// ======================================
-// HISTÓRICO NA NUVEM
-// ======================================
-
-async function loadCloudHistory() {
-
-  if (!currentUser) return;
-
-  const { data: rows, error } =
-    await supabaseClient
-      .from("study_records")
-      .select(
-        "id,subject,topic,study_date,created_at"
-      )
-      .eq("user_id", currentUser.id)
-      .order("created_at", {
-        ascending: false
-      });
-
-  if (error) {
-    setAuthStatus(
-      "Conectado, mas não foi possível carregar o histórico: " +
-      error.message
-    );
-    return;
-  }
-
-  data.history = rows || [];
-
-  save();
-
-  renderHistory();
-
-  setAuthStatus(
-    "Conectado como " +
-    currentUser.email +
-    ". " +
-    data.history.length +
-    " estudo(s) sincronizado(s)."
-  );
-}
-
-
-// RESTAURAR SESSÃO AO ABRIR O APP
-
-supabaseClient.auth.onAuthStateChange(
-  (_event, session) => {
-    setSignedIn(session?.user || null);
-  }
-);
-
-(async function restoreSession() {
-
-  const { data: result, error } =
-    await supabaseClient.auth.getSession();
-
-  if (error) {
-    setAuthStatus(
-      "Erro ao restaurar sessão: " + error.message
-    );
-    return;
-  }
-
-  if (result.session?.user) {
-
-    setSignedIn(result.session.user);
-
-    await loadCloudHistory();
-  }
-
-})();
-
 
 // ======================================
 // MISSÕES
 // ======================================
-
 function renderTasks() {
-
   $("tasks").innerHTML = "";
 
   data.tasks.forEach((task, i) => {
-
     const div = document.createElement("div");
-
     div.className = "task";
 
     const check = document.createElement("input");
-
     check.type = "checkbox";
-
     check.checked = data.checked.includes(i);
 
     check.onchange = () => {
-
       if (check.checked) {
-        data.checked.push(i);
+        if (!data.checked.includes(i)) data.checked.push(i);
       } else {
-        data.checked = data.checked.filter(
-          x => x !== i
-        );
+        data.checked = data.checked.filter(x => x !== i);
       }
-
-      save();
-
+      saveLocal();
       renderTasks();
     };
 
     const label = document.createElement("span");
-
     label.textContent = task;
-
-    if (check.checked) {
-      label.className = "done";
-    }
+    if (check.checked) label.className = "done";
 
     div.append(check, label);
-
     $("tasks").append(div);
-
   });
 
   updateProgress();
 }
 
-
 function updateProgress() {
-
   const total = data.tasks.length;
   const done = data.checked.length;
-
-  const pct = total
-    ? Math.round(done / total * 100)
-    : 0;
+  const pct = total ? Math.round(done / total * 100) : 0;
 
   $("bar").style.width = pct + "%";
-
-  $("percentage").textContent =
-    pct + "% concluído";
-
-  $("count").textContent =
-    done + " de " + total + " missões";
+  $("percentage").textContent = pct + "% concluído";
+  $("count").textContent = done + " de " + total + " missões";
 }
 
-
 function addTask() {
-
   const task = prompt("Qual é a nova missão?");
-
-  if (task?.trim()) {
-
+  if (task && task.trim()) {
     data.tasks.push(task.trim());
-
-    save();
-
+    saveLocal();
     renderTasks();
   }
 }
 
-
 // ======================================
-// REGISTRAR ESTUDO NO SUPABASE
+// ESTUDOS NA NUVEM — SEM LOGIN
 // ======================================
+// Visitantes podem consultar e inserir estudos.
+// A política do banco não concede UPDATE nem DELETE ao visitante anônimo.
 
 async function saveStudy() {
-
   const subject = $("subject").value;
-
   const topic = $("topic").value.trim();
 
-  if (!topic) return;
-
-  if (!currentUser) {
-
-    setAuthStatus(
-      "Entre na sua conta para salvar novos estudos na nuvem."
-    );
-
+  if (!topic) {
+    $("cloudStatus").textContent = "Digite o assunto estudado antes de registrar.";
+    $("topic").focus();
     return;
   }
 
-  const { data: row, error } =
-    await supabaseClient
-      .from("study_records")
-      .insert({
-        user_id: currentUser.id,
-        subject: subject,
-        topic: topic,
-        study_date: new Date()
-          .toISOString()
-          .slice(0, 10)
-      })
-      .select(
-        "id,subject,topic,study_date,created_at"
-      )
-      .single();
+  $("cloudStatus").textContent = "Salvando estudo...";
+  const { data: row, error } = await supabaseClient
+    .from("study_records")
+    .insert({
+      subject: subject,
+      topic: topic,
+      study_date: new Date().toISOString().slice(0, 10)
+    })
+    .select("id,subject,topic,study_date,created_at")
+    .single();
 
   if (error) {
-
-    setAuthStatus(
-      "Falha ao salvar no Supabase: " +
-      error.message
-    );
-
+    $("cloudStatus").textContent =
+      "Não foi possível salvar na nuvem: " + error.message;
     return;
   }
 
   data.history.unshift(row);
-
+  saveLocal();
   $("topic").value = "";
-
-  save();
-
   renderHistory();
-
-  setAuthStatus(
-    "Estudo salvo e sincronizado com o Supabase."
-  );
+  $("cloudStatus").textContent =
+    "Estudo registrado e compartilhado com os visitantes.";
 }
 
+async function loadCloudHistory() {
+  $("cloudStatus").textContent = "Carregando estudos compartilhados...";
+
+  const { data: rows, error } = await supabaseClient
+    .from("study_records")
+    .select("id,subject,topic,study_date,created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("cloudStatus").textContent =
+      "Erro ao carregar os estudos: " + error.message;
+    return;
+  }
+
+  data.history = rows || [];
+  saveLocal();
+  renderHistory();
+  $("cloudStatus").textContent =
+    data.history.length + " estudo(s) compartilhado(s). Não é necessário fazer login.";
+}
 
 // ======================================
-// MOSTRAR HISTÓRICO
+// HISTÓRICO
 // ======================================
-
 function renderHistory() {
-
   $("history").innerHTML = "";
 
-  data.history.forEach(item => {
-
+  if (!data.history.length) {
     const p = document.createElement("p");
-
-    p.textContent =
-      "📖 " +
-      (
-        typeof item === "string"
-          ? item
-          : item.subject +
-            " — " +
-            item.topic +
-            " (" +
-            item.study_date +
-            ")"
-      );
-
+    p.className = "small";
+    p.textContent = "Nenhum estudo registrado ainda.";
     $("history").append(p);
+    return;
+  }
 
+  data.history.forEach(item => {
+    const p = document.createElement("div");
+    p.className = "record";
+
+    if (typeof item === "string") {
+      p.textContent = "📖 " + item;
+    } else {
+      const subject = item.subject || "Disciplina";
+      const topic = item.topic || "Assunto não informado";
+      const date = item.study_date || "";
+      p.textContent = "📖 " + subject + " — " + topic +
+        (date ? " (" + date + ")" : "");
+    }
+    $("history").append(p);
   });
 }
 
-
 // ======================================
-// CADERNO DE ERROS
+// CADERNO DE ERROS — LOCAL
 // ======================================
-
 function saveMistake() {
-
   const value = $("mistake").value.trim();
-
   if (!value) return;
 
   data.mistakes.unshift(value);
-
   $("mistake").value = "";
-
-  save();
-
+  saveLocal();
   renderMistakes();
 }
 
-
 function renderMistakes() {
-
   $("mistakes").innerHTML = "";
 
   data.mistakes.forEach(item => {
-
     const p = document.createElement("p");
-
     p.textContent = "⚠️ " + item;
-
     $("mistakes").append(p);
-
   });
 }
-
 
 // ======================================
 // POMODORO
 // ======================================
-
 let seconds = 1500;
-
 let interval = null;
 
-
 function showTimer() {
-
-  const m = String(
-    Math.floor(seconds / 60)
-  ).padStart(2, "0");
-
-  const s = String(
-    seconds % 60
-  ).padStart(2, "0");
-
+  const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const s = String(seconds % 60).padStart(2, "0");
   $("timer").textContent = m + ":" + s;
 }
 
-
 function startTimer() {
-
   if (interval) return;
 
   interval = setInterval(() => {
-
-    if (seconds > 0) {
-      seconds--;
-    }
-
+    if (seconds > 0) seconds--;
     showTimer();
 
     if (seconds === 0) {
-
       clearInterval(interval);
-
       interval = null;
-
-      alert(
-        "Pomodoro concluído! Faça uma pausa."
-      );
+      alert("Pomodoro concluído! Faça uma pausa.");
     }
-
   }, 1000);
 }
 
-
 function pauseTimer() {
-
   clearInterval(interval);
-
   interval = null;
 }
 
-
 function resetTimer() {
-
   pauseTimer();
-
   seconds = 1500;
-
   showTimer();
 }
-
 
 // ======================================
 // INICIALIZAÇÃO
 // ======================================
-
 renderTasks();
-
 renderHistory();
-
 renderMistakes();
-
 showTimer();
-
+loadCloudHistory();
 </script>
-
 </body>
 </html>
+ = "⚠️ " + item;
+    $("mistakes").append(p);
+  });
+}
+
+// ======================================
+// POMODORO
+// ======================================
+let seconds = 1500;
+let interval = null;
+
+fun
