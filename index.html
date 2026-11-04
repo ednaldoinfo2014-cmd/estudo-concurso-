@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO PRO</title>
+<style>
+:root {
+  --bg:#101522;
+  --card:#1b2435;
+  --accent:#48a6ff;
+  --green:#35cf91;
+  --text:#f1f5fb;
+  --muted:#9ba9bd;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header {text-align:center;margin:12px 0 24px}
+h1 {color:var(--accent);letter-spacing:2px}
+.subtitle {color:var(--muted)}
+.card {
+  background:var(--card);
+  padding:18px;
+  border-radius:14px;
+  margin-bottom:16px;
+}
+h2 {font-size:18px;margin-top:0}
+.progress {
+  background:#303c50;
+  height:12px;
+  border-radius:20px;
+  overflow:hidden;
+}
+#bar {
+  height:100%;
+  width:0%;
+  background:var(--green);
+  transition:.3s;
+}
+.task {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #303c50;
+}
+.task input {width:19px;height:19px}
+.done {text-decoration:line-through;color:var(--muted)}
+button {
+  border:0;
+  background:var(--accent);
+  color:white;
+  padding:12px 16px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button.secondary {background:#35445b}
+.timer {
+  font-size:46px;
+  text-align:center;
+  font-weight:bold;
+  margin:18px;
+}
+select,input,textarea {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  background:#101522;
+  color:white;
+  border:1px solid #35445b;
+  border-radius:8px;
+}
+.small {color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>ESTUDO PRO</h1>
+<div class="subtitle">CENTRAL DE MISSÕES • PMMG</div>
+</header>
+
+<div class="card">
+<h2>📊 Progresso do dia</h2>
+<div class="progress"><div id="bar"></div></div>
+<p id="percentage">0% concluído</p>
+<p id="count">0 de 0 missões</p>
+</div>
+
+<div class="card">
+<h2>🎯 Missões de hoje</h2>
+<div id="tasks"></div>
+<button onclick="addTask()">+ Nova missão</button>
+</div>
+
+<div class="card">
+<h2>⏱️ Pomodoro</h2>
+<div class="timer" id="timer">25:00</div>
+<div style="display:flex;gap:8px;justify-content:center">
+<button onclick="startTimer()">Iniciar</button>
+<button class="secondary" onclick="pauseTimer()">Pausar</button>
+<button class="secondary" onclick="resetTimer()">Zerar</button>
+</div>
+<p class="small" style="text-align:center">25 minutos de foco</p>
+</div>
+
+<div class="card">
+<h2>📚 Disciplinas</h2>
+<select id="subject">
+<option>Português</option>
+<option>Matemática</option>
+<option>Inglês</option>
+<option>Direito</option>
+</select>
+<input id="topic" placeholder="Digite o assunto estudado">
+<button onclick="saveStudy()">Registrar estudo</button>
+<div id="history"></div>
+</div>
+
+<div class="card">
+<h2>📝 Caderno de erros</h2>
+<textarea id="mistake" rows="4" placeholder="Anote a questão que errou e o motivo..."></textarea>
+<button onclick="saveMistake()">Salvar erro</button>
+<div id="mistakes"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let data = JSON.parse(localStorage.getItem("estudoPro") || "{}");
+data.tasks ||= [
+"Português — 10 questões",
+"Matemática — 5 questões",
+"Inglês — 5 questões",
+"Direito — 5 questões",
+"Revisar os erros do dia"
+];
+data.checked ||= [];
+data.history ||= [];
+data.mistakes ||= [];
+
+function save() {
+ localStorage.setItem("estudoPro",JSON.stringify(data));
+}
+
+function renderTasks() {
+ $("tasks").innerHTML="";
+ data.tasks.forEach((task,i)=>{
+ const div=document.createElement("div");
+ div.className="task";
+ const check=document.createElement("input");
+ check.type="checkbox";
+ check.checked=data.checked.includes(i);
+ check.onchange=()=>{
+ if(check.checked)data.checked.push(i);
+ else data.checked=data.checked.filter(x=>x!==i);
+ save();renderTasks();
+ };
+ const label=document.createElement("span");
+ label.textContent=task;
+ if(check.checked)label.className="done";
+ div.append(check,label);
+ $("tasks").append(div);
+ });
+ updateProgress();
+}
+
+function updateProgress() {
+ const total=data.tasks.length;
+ const done=data.checked.length;
+ const pct=total?Math.round(done/total*100):0;
+ $("bar").style.width=pct+"%";
+ $("percentage").textContent=pct+"% concluído";
+ $("count").textContent=done+" de "+total+" missões";
+}
+
+function addTask() {
+ const task=prompt("Qual é a nova missão?");
+ if(task?.trim()){
+ data.tasks.push(task.trim());
+ save();renderTasks();
+ }
+}
+
+function saveStudy() {
+ const subject=$("subject").value;
+ const topic=$("topic").value.trim();
+ if(!topic)return;
+ data.history.unshift(subject+" — "+topic);
+ $("topic").value="";
+ save();renderHistory();
+}
+
+function renderHistory() {
+ $("history").innerHTML="";
+ data.history.forEach(item=>{
+ const p=document.createElement("p");
+ p.textContent="📖 "+item;
+ $("history").append(p);
+ });
+}
+
+function saveMistake() {
+ const value=$("mistake").value.trim();
+ if(!value)return;
+ data.mistakes.unshift(value);
+ $("mistake").value="";
+ save();renderMistakes();
+}
+
+function renderMistakes() {
+ $("mistakes").innerHTML="";
+ data.mistakes.forEach(item=>{
+ const p=document.createElement("p");
+ p.textContent="⚠️ "+item;
+ $("mistakes").append(p);
+ });
+}
+
+let seconds=1500,interval=null;
+
+function showTimer() {
+ const m=String(Math.floor(seconds/60)).padStart(2,"0");
+ const s=String(seconds%60).padStart(2,"0");
+ $("timer").textContent=m+":"+s;
+}
+
+function startTimer() {
+ if(interval)return;
+ interval=setInterval(()=>{
+ if(seconds>0)seconds--;
+ showTimer();
+ if(seconds===0){
+ clearInterval(interval);interval=null;
+ alert("Pomodoro concluído! Faça uma pausa.");
+ }
+ },1000);
+}
+
+function pauseTimer() {
+ clearInterval(interval);interval=null;
+}
+
+function resetTimer() {
+ pauseTimer();seconds=1500;showTimer();
+}
+
+renderTasks();
+renderHistory();
+renderMistakes();
+showTimer();
+</script>
+</body>
+</html>
